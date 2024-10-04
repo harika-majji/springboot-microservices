@@ -2,6 +2,7 @@ package com.project.employeeservice.controller;
 
 
 import com.project.employeeservice.dto.EmployeeDTO;
+import com.project.employeeservice.dto.EmployeeDeptDTO;
 import com.project.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class EmployeeController {
 
     }
     @GetMapping("{employeeID}")
-    public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable Long employeeID){
-        EmployeeDTO savedEmployee = employeeService.getEmployeeByID(employeeID);
+    public ResponseEntity<EmployeeDeptDTO> getEmployee(@PathVariable Long employeeID){
+        EmployeeDeptDTO savedEmployee = employeeService.getEmployeeByID(employeeID);
 
         return new ResponseEntity<>(savedEmployee, HttpStatus.OK);
 

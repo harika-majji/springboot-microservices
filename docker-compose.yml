@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  service-registry:
+    image: service-registry
+    build:
+      context: ./service-registry
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      multicontainer-sb-mysql-net:
+    restart: on-failure
+
+  department-service:
+    image: department-service
+    build:
+      context: ./department-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    networks:
+      multicontainer-sb-mysql-net:
+    depends_on:
+      - department-db
+    environment:
+      - EUREKA_SERVER_URL=http://localhost:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://department-db:3306/department_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    restart: on-failure
+
+  employee-service:
+    image: employee-service
+    build:
+      context: ./employee-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      multicontainer-sb-mysql-net:
+    depends_on:
+      - employee-db
+    environment:
+      - EUREKA_SERVER_URL=http://localhost:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://employee-db:3306/employee_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    restart: on-failure
+
+  employee-db:
+    container_name: employee-db
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: employee_db
+    networks:
+      multicontainer-sb-mysql-net:
+
+  department-db:
+    container_name: department-db
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: department_db
+    networks:
+      multicontainer-sb-mysql-net:
+
+
+networks:
+  multicontainer-sb-mysql-net:
